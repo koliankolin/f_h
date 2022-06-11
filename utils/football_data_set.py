@@ -31,6 +31,7 @@ class TeamVariableType(Enum):
 
 class FootballDataSet:
     COMMON_COLUMNS = ['row_id', 'scout_id']
+    CATEGORICAL_THRESHOLD = 7
 
     def __init__(self, csv_path: str):
         self.data = pd.read_csv(csv_path)
@@ -103,6 +104,22 @@ class FootballDataSet:
 
         return self._add_common_cols(filtered_columns) if add_common_cols else filtered_columns
 
+    def get_categorical_columns(self, add_common_cols: bool = False) -> list:
+        columns = []
+
+        for column_name in self.data.columns:
+            count_unique_values = len(self.data[column_name].unique())
+            if count_unique_values < self.CATEGORICAL_THRESHOLD:
+                columns.append(column_name)
+
+        return self._add_common_cols(columns) if add_common_cols else columns
+
+    def get_player_categorical_columns(self, add_common_cols: bool = False) -> list:
+        return self._intersect_categorical_cols(self.get_player_columns(add_common_cols))
+
+    def get_team_categorical_columns(self, team_type: TeamType, add_common_cols: bool = False) -> list:
+        return self._intersect_categorical_cols(self.get_team_columns(team_type, add_common_cols))
+
     def _get_columns_by_regex(self, regex: str) -> list:
         return list(self.data.head(1).filter(regex=regex).columns)
 
@@ -113,3 +130,10 @@ class FootballDataSet:
     @staticmethod
     def _get_filtered_columns_by_stats_type(columns: list, stats_type: StatsVariableType) -> list:
         return list(filter(lambda x: stats_type in x, columns))
+
+    def _intersect_categorical_cols(self, columns: list) -> list:
+        return list(
+            set(
+                self.get_categorical_columns()
+            ).intersection(set(columns))
+        )
