@@ -1,3 +1,5 @@
 .idea/
-./notebooks/.ipynb_checkpoints
+notebooks/.ipynb_checkpoints
+notebooks/catboost_info/
 data/
+utils/__pycache__/
