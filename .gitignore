@@ -1,5 +1,7 @@
 .idea/
 notebooks/.ipynb_checkpoints
 notebooks/catboost_info/
-data/
+data/test.csv
+data/train.csv
+data/sample_submission_wBWLI0s.csv
 utils/__pycache__/
